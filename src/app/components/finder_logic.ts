@@ -16,9 +16,11 @@ const semesterKeys = [
 
 async function getStarplanData() {
   let results = [];
+  const today: string = new Date().toISOString().split("T")[0];
+
   for (const key of semesterKeys) {
     const response = await fetch(
-      `https://splan.hdm-stuttgart.de/splan/json?m=getTT&sel=pg&pu=34&og=73&pg=${key}&sd=true&dfc=2024-04-04&loc=1&sa=false&cb=o`,
+      `https://splan.hdm-stuttgart.de/splan/json?m=getTT&sel=pg&pu=34&og=73&pg=${key}&sd=true&dfc=${today}&loc=1&sa=false&cb=o`,
       { next: { revalidate: 3600 } } // chache result for 1h
     );
     if (response && response.body && response.status === 200) {
