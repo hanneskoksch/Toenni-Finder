@@ -14,9 +14,13 @@ const semesterKeys = [
   "CS3-1-Wahl",
 ];
 
+function getDate(): string {
+  return new Date().toISOString().split("T")[0];
+}
+
 async function getStarplanData() {
   let results = [];
-  const today: string = new Date().toISOString().split("T")[0];
+  const today: string = getDate();
 
   for (const key of semesterKeys) {
     const response = await fetch(
@@ -36,18 +40,8 @@ interface Event {
   timeSlot: string;
   courseName: string;
   horstLink: string;
-}
-
-interface EventData {
-  day: string;
-  events: Event[];
-}
-
-interface Plan {
-  [key: string]: {
-    name: string;
-    events: Event[];
-  };
+  semester: string;
+  splanLink: string;
 }
 
 function getWeekdaysPixelArray(htmlData: string): number[] {
@@ -76,13 +70,13 @@ export async function parseStarplanData(): Promise<Event[][]> {
   const starPlanData = await getStarplanData();
 
   // iterate over all semesters
-  starPlanData.forEach((semesterData) => {
+  starPlanData.forEach((semesterData, semesterNumber) => {
     const $ = cheerio.load(semesterData);
 
-    // get displayed dates
-    const dates = $("#ttxline");
+    // get displayed days
+    const days = $("#ttxline");
     // get width of each displayed date
-    const weekdaysPixels = getWeekdaysPixelArray(dates.toString());
+    const weekdaysPixels = getWeekdaysPixelArray(days.toString());
 
     // iterate over all events within the semester
     $(".ttevent").each((_, element) => {
@@ -109,6 +103,9 @@ export async function parseStarplanData(): Promise<Event[][]> {
               (value) => !(value.startsWith("<span") || value == "Verlegung")
             );
 
+            console.log(eventAsArray);
+            const semester = semesterKeys[semesterNumber];
+
             const event: Event = {
               courseName: eventAsArray![0],
               profName: eventAsArray![1],
@@ -117,6 +114,8 @@ export async function parseStarplanData(): Promise<Event[][]> {
               horstLink: `https://horst.hdm-stuttgart.de/${
                 eventAsArray![3].split(/[ ,]/)[0]
               }`,
+              semester: semester,
+              splanLink: `https://splan.hdm-stuttgart.de/splan/mobile?lan=de&acc=true&act=tt&sel=pg&pu=34&og=73&pg=${semester}&sd=true&dfc=${getDate()}&loc=1&sa=false&cb=o`,
             };
             if (result[i]) {
               if (!eventAlreadyExists(event, result[i])) {
