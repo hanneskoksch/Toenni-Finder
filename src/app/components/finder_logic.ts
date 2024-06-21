@@ -25,7 +25,11 @@ async function getStarplanData() {
   for (const key of semesterKeys) {
     const response = await fetch(
       `https://splan.hdm-stuttgart.de/splan/json?m=getTT&sel=pg&pu=34&og=73&pg=${key}&sd=true&dfc=${today}&loc=1&sa=false&cb=o`,
-      { next: { revalidate: 3600 } } // chache result for 1h
+      { cache: "no-store" } // always fetch fresh data
+
+      // the implementation below was problematic because after the revalidation
+      // time, stale data was served in the first request -_-
+      // { next: { revalidate: 10 } } // chache result for 1h
     );
     if (response && response.body && response.status === 200) {
       results.push(await response.text());
@@ -103,7 +107,7 @@ export async function parseStarplanData(): Promise<Event[][]> {
               (value) => !(value.startsWith("<span") || value == "Verlegung")
             );
 
-            console.log(eventAsArray);
+            // console.log(eventAsArray);
             const semester = semesterKeys[semesterNumber];
 
             const event: Event = {
