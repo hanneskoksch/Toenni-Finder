@@ -1,5 +1,6 @@
 import Finder from "./components/Finder";
 import { Suspense } from "react";
+import { LoaderCircle } from "lucide-react";
 
 export default function Home() {
   return (
@@ -11,7 +12,14 @@ export default function Home() {
         A tool for all people who are struggling to find their dearest and
         beloved Prof. ❤️
       </p>
-      <Suspense fallback={<p>Finding Toenni...</p>}>
+      <Suspense
+        fallback={
+          <div className="flex space-x-3 text-zinc-600 mt-10">
+            <LoaderCircle className="animate-spin" />
+            <p>Looking for Toenni...</p>
+          </div>
+        }
+      >
         <Finder />
       </Suspense>
     </main>
