@@ -45,8 +45,8 @@ async function Finder() {
       {dayArray().map(
         (day, index) =>
           hasEventOnDay(day) && (
-            <div key={`day-${index}`}>
-              <p className="p-4 bg-gradient-to-r from-zinc-400 to-zinc-300 text-white rounded-lg">
+            <div className="w-full max-w-screen-sm" key={`day-${index}`}>
+              <p className="p-4 bg-gradient-to-r from-zinc-400 to-zinc-300 text-white rounded-lg ">
                 {weekdays[day.getDay()]}, {day.toLocaleDateString("de-DE")}
               </p>
               <div className="p-4">
@@ -54,7 +54,7 @@ async function Finder() {
                   <div key={`event-${i}`}>
                     {sameDay(day, event.dateStart) && (
                       <div
-                        className="flex justify-between space-x-14 mb-6"
+                        className="flex justify-between space-x-3 mb-6"
                         key={`event-${i}1`}
                       >
                         <div>
@@ -77,7 +77,7 @@ async function Finder() {
                             <p className="text-sm">{event.semester}</p>
                           </a>
                         </div>
-                        <div className="text-right">
+                        <div className="text-right whitespace-nowrap">
                           <a target="_blank" href={event.horstLink}>
                             📍 Find in Horst
                           </a>
