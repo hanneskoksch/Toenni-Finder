@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { getAllEvents } from "./parse-ical";
 
 async function Finder() {
@@ -77,11 +78,11 @@ async function Finder() {
                             <p className="text-sm">{event.semester}</p>
                           </a>
                         </div>
-                        <div className="text-right whitespace-nowrap">
+                        <Button variant="ghost" asChild size="sm">
                           <a target="_blank" href={event.horstLink}>
                             📍 Find in Horst
                           </a>
-                        </div>
+                        </Button>
                       </div>
                     )}
                   </div>
