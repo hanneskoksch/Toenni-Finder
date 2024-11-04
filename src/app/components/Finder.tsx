@@ -1,11 +1,21 @@
 import { Button } from "@/components/ui/button";
 import { getAllEvents } from "./parse-ical";
 
-async function Finder() {
+interface FinderProps {
+  profName: string;
+}
+
+async function Finder({ profName }: FinderProps) {
   const starPlanData = await getAllEvents();
 
+  const filteredStarplanData = profName
+    ? starPlanData.filter((event) =>
+        event.profName.toLowerCase().includes(profName.toLowerCase())
+      )
+    : starPlanData;
+
   const hasEventOnDay = (day: Date): boolean => {
-    return starPlanData.some((event) => {
+    return filteredStarplanData.some((event) => {
       return event.dateStart.toDateString() === day.toDateString();
     });
   };
@@ -38,7 +48,7 @@ async function Finder() {
     return days;
   };
 
-  if (starPlanData.length === 0)
+  if (filteredStarplanData.length === 0)
     return <p className="p-8">Toenni could not be found 😢</p>;
 
   return (
@@ -51,7 +61,7 @@ async function Finder() {
                 {weekdays[day.getDay()]}, {day.toLocaleDateString("de-DE")}
               </p>
               <div className="p-4">
-                {starPlanData.map((event, i) => (
+                {filteredStarplanData.map((event, i) => (
                   <div key={`event-${i}`}>
                     {sameDay(day, event.dateStart) && (
                       <div

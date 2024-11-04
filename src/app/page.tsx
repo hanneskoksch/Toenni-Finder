@@ -1,8 +1,14 @@
+"use client";
+
 import Finder from "./components/Finder";
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import { LoaderCircle } from "lucide-react";
+import OtherProfSearch from "./components/other-prof-search";
+import { Separator } from "@/components/ui/separator";
 
 export default function Home() {
+  const [profName, setProfName] = useState("");
+
   return (
     <main className="flex min-h-screen flex-col items-center p-4 md:p-24">
       <h1 className="text-center text-transparent bg-clip-text font-extrabold text-6xl py-8 bg-gradient-to-br from-zinc-300 to-zinc-800">
@@ -20,8 +26,10 @@ export default function Home() {
           </div>
         }
       >
-        <Finder />
+        <Finder profName={profName} />
       </Suspense>
+      <Separator className="my-8" />
+      <OtherProfSearch onSearch={setProfName} />
     </main>
   );
 }
