@@ -34,7 +34,7 @@ function OtherProfSearch({ onSearch }: OtherProfSearchProps) {
             onClick={
               profName !== ""
                 ? () => {
-                    onSearch(profName);
+                    onSearch(profName.trim());
                   }
                 : undefined
             }
