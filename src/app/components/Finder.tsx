@@ -122,11 +122,18 @@ function Finder({ profName }: FinderProps) {
                             <p className="text-sm">{event.semester}</p>
                           </a>
                         </div>
-                        <Button variant="ghost" asChild size="sm">
-                          <a target="_blank" href={event.horstLink}>
-                            📍 Find in Horst
-                          </a>
-                        </Button>
+                        <div className="flex flex-col">
+                          <Button variant="ghost" asChild size="sm">
+                            <a target="_blank" href={event.horstLink}>
+                              📍 Find in Horst
+                            </a>
+                          </Button>
+                          <Button variant="ghost" asChild size="sm">
+                            <a target="_blank" href={event.splanLink}>
+                              📅 Find in Splan
+                            </a>
+                          </Button>
+                        </div>
                       </div>
                     )}
                   </div>

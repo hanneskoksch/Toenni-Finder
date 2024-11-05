@@ -12,7 +12,7 @@ interface StarplanEvent {
 
   horstLink: string;
   semester: string;
-  splanLink?: string;
+  splanLink: string;
 }
 
 /**
@@ -32,8 +32,10 @@ async function getOfferedSemesterIds(): Promise<number[]> {
  * Find out the semester number (e.g. MI-1, MI-2, MI-3, MI-3-Wahl, ...) ids
  * for the relevant study programs
  */
-async function getSemesterNumberIds(semesterId: number): Promise<number[]> {
-  const semesterNumberIds: number[] = [];
+async function getSemesterNumberIds(
+  semesterId: number
+): Promise<{ id: number; studyProgramId: number }[]> {
+  const semesterNumberIds: { id: number; studyProgramId: number }[] = [];
 
   const relevantStudyProgramIds = [
     73, // MI7
@@ -47,8 +49,11 @@ async function getSemesterNumberIds(semesterId: number): Promise<number[]> {
     );
     const data = await response.json();
 
-    data[0].map((studyProgram: any) => {
-      semesterNumberIds.push(studyProgram.id);
+    data[0].map((semesterNumber: any) => {
+      semesterNumberIds.push({
+        id: semesterNumber.id,
+        studyProgramId: studyProgramId,
+      });
     });
   }
   return semesterNumberIds;
@@ -65,19 +70,27 @@ async function getIcal(
   return data;
 }
 
-function parseIcal(ical: string): StarplanEvent[] {
+function parseIcal(
+  ical: string,
+  studyProgramId: number,
+  semesterId: number
+): StarplanEvent[] {
   const jcalData = ICAL.parse(ical);
   const comp = new ICAL.Component(jcalData);
   const vevents = comp.getAllSubcomponents("vevent");
   const allEvents: StarplanEvent[] = [];
   for (const vevent of vevents) {
     const event = new ICAL.Event(vevent);
-    allEvents.push(parseVevent(event));
+    allEvents.push(parseVevent(event, studyProgramId, semesterId));
   }
   return allEvents;
 }
 
-function parseVevent(vevent: ICAL.Event): StarplanEvent {
+function parseVevent(
+  vevent: ICAL.Event,
+  studyProgramId: number,
+  semesterId: number
+): StarplanEvent {
   // Format: course \n prof \n semester
   const description = vevent.description;
   let descriptionArray = description.split("\n");
@@ -97,6 +110,10 @@ function parseVevent(vevent: ICAL.Event): StarplanEvent {
   let horstLocationName = location.split(",")[0];
   horstLocationName = horstLocationName.split(" ")[0];
 
+  const semester = description.split("\n")[2];
+
+  const horstLinkDate = new Date().toISOString().split("T")[0];
+
   return {
     courseName: descriptionArray[0],
     profName: descriptionArray[1],
@@ -104,7 +121,8 @@ function parseVevent(vevent: ICAL.Event): StarplanEvent {
     dateStart: dateStart.toJSDate(),
     dateEnd: dateEnd.toJSDate(),
     horstLink: `https://horst.hdm-stuttgart.de/${horstLocationName}`,
-    semester: description.split("\n")[2],
+    semester: semester,
+    splanLink: `https://splan.hdm-stuttgart.de/splan/mobile?lan=de&acc=true&act=tt&sel=pg&pu=${semesterId}&og=${studyProgramId}&pg=${semester}&sd=true&dfc=${horstLinkDate}&loc=1&sa=false&cb=o`,
   };
 }
 
@@ -117,8 +135,12 @@ async function getAllEvents(): Promise<StarplanEvent[]> {
     const semesterNumberIds = await getSemesterNumberIds(semesterId);
 
     for (const semesterNumberId of semesterNumberIds) {
-      const ical = await getIcal(semesterId, semesterNumberId);
-      const newEvents = parseIcal(ical);
+      const ical = await getIcal(semesterId, semesterNumberId.id);
+      const newEvents = parseIcal(
+        ical,
+        semesterNumberId.studyProgramId,
+        semesterId
+      );
       for (const newEvent of newEvents) {
         if (
           !allEvents.some(
