@@ -2,7 +2,7 @@
 
 import Finder from "./components/Finder";
 import { useState } from "react";
-import OtherProfSearch from "./components/other-prof-search";
+import OtherProfSearch from "./components/OtherProfSearch";
 import { Separator } from "@/components/ui/separator";
 
 export default function Home() {
