@@ -9,7 +9,7 @@ export default function Home() {
   const [profName, setProfName] = useState("Toenni");
 
   return (
-    <main className="flex min-h-screen flex-col items-center p-4 md:p-24">
+    <main className="flex min-h-screen flex-col items-center p-4 md:p-24 mb-10">
       <h1 className="text-center text-transparent bg-clip-text font-extrabold text-6xl py-8 bg-gradient-to-br from-zinc-300 to-zinc-800">
         {profName}-Finder
       </h1>
@@ -18,7 +18,7 @@ export default function Home() {
         beloved Prof. ❤️
       </p>
       <Finder profName={profName} />
-      <Separator className="my-8" />
+      <Separator className="my-8 max-w-screen-sm" />
       <OtherProfSearch
         onSearch={(query: string) => {
           setProfName(query);
