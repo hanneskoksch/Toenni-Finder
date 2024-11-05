@@ -1,6 +1,8 @@
+"use server";
+
 import ICAL from "ical.js";
 
-interface Event {
+interface StarplanEvent {
   courseName: string;
   profName: string;
   roomId: string;
@@ -63,11 +65,11 @@ async function getIcal(
   return data;
 }
 
-function parseIcal(ical: string): Event[] {
+function parseIcal(ical: string): StarplanEvent[] {
   const jcalData = ICAL.parse(ical);
   const comp = new ICAL.Component(jcalData);
   const vevents = comp.getAllSubcomponents("vevent");
-  const allEvents: Event[] = [];
+  const allEvents: StarplanEvent[] = [];
   for (const vevent of vevents) {
     const event = new ICAL.Event(vevent);
     allEvents.push(parseVevent(event));
@@ -75,7 +77,7 @@ function parseIcal(ical: string): Event[] {
   return allEvents;
 }
 
-function parseVevent(vevent: ICAL.Event): Event {
+function parseVevent(vevent: ICAL.Event): StarplanEvent {
   // Format: course \n prof \n semester
   const description = vevent.description;
   let descriptionArray = description.split("\n");
@@ -106,8 +108,8 @@ function parseVevent(vevent: ICAL.Event): Event {
   };
 }
 
-async function getAllEvents(): Promise<Event[]> {
-  const allEvents: Event[] = [];
+async function getAllEvents(): Promise<StarplanEvent[]> {
+  const allEvents: StarplanEvent[] = [];
 
   const semesterIds = await getOfferedSemesterIds();
 
@@ -138,10 +140,8 @@ async function getAllEvents(): Promise<Event[]> {
 
   const filteredEvents = allEvents.filter((event) => {
     return (
-      //event.profName.includes("Jordine") &&
-      event.profName.includes("Toenniessen") &&
-      event.dateStart >= today &&
-      event.dateStart <= todayNextWeek
+      // event.profName.includes("Toenniessen") && // filtering was moved to client component
+      event.dateStart >= today && event.dateStart <= todayNextWeek
     );
   });
 
@@ -153,3 +153,5 @@ async function getAllEvents(): Promise<Event[]> {
 }
 
 export { getAllEvents };
+
+export type { StarplanEvent };

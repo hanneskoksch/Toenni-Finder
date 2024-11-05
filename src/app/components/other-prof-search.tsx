@@ -31,9 +31,13 @@ function OtherProfSearch({ onSearch }: OtherProfSearchProps) {
           </div>
           <Button
             variant="secondary"
-            onClick={() => {
-              onSearch(profName);
-            }}
+            onClick={
+              profName !== ""
+                ? () => {
+                    onSearch(profName);
+                  }
+                : undefined
+            }
           >
             Search
           </Button>

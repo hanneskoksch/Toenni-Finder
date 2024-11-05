@@ -1,20 +1,57 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
-import { getAllEvents } from "./parse-ical";
+import { getAllEvents, StarplanEvent } from "./parse-ical";
+import { useEffect, useState } from "react";
+import { LoaderCircle } from "lucide-react";
 
 interface FinderProps {
   profName: string;
 }
 
-async function Finder({ profName }: FinderProps) {
-  const starPlanData = await getAllEvents();
+function Finder({ profName }: FinderProps) {
+  const [starPlanData, setStarPlanData] = useState<StarplanEvent[] | null>(
+    null
+  );
+  const [filteredStarplanData, setFilteredStarplanData] = useState<
+    StarplanEvent[] | null
+  >(null);
 
-  const filteredStarplanData = profName
-    ? starPlanData.filter((event) =>
+  // initial data fetch
+  useEffect(() => {
+    const fetchStarPlanData = async () => {
+      const data = await getAllEvents();
+      setStarPlanData(data);
+    };
+
+    fetchStarPlanData();
+  }, []);
+
+  // filter data based on profName
+  useEffect(() => {
+    if (!starPlanData) return;
+    setFilteredStarplanData(
+      starPlanData.filter((event) =>
         event.profName.toLowerCase().includes(profName.toLowerCase())
       )
-    : starPlanData;
+    );
+  }, [starPlanData, profName]);
+
+  // loading state
+  if (!filteredStarplanData)
+    return (
+      <div className="flex space-x-3 text-zinc-600 mt-10">
+        <LoaderCircle className="animate-spin" />
+        <p>Looking for {profName}...</p>
+      </div>
+    );
+
+  // no data found state
+  if (filteredStarplanData.length === 0)
+    return <p className="p-8">{profName} could not be found 😢</p>;
 
   const hasEventOnDay = (day: Date): boolean => {
+    if (!filteredStarplanData) return false;
     return filteredStarplanData.some((event) => {
       return event.dateStart.toDateString() === day.toDateString();
     });
@@ -30,7 +67,7 @@ async function Finder({ profName }: FinderProps) {
     "Samstag",
   ];
 
-  const sameDay = (d1: Date, d2: Date): boolean => {
+  const isSameDay = (d1: Date, d2: Date): boolean => {
     return (
       d1.getFullYear() === d2.getFullYear() &&
       d1.getMonth() === d2.getMonth() &&
@@ -48,9 +85,6 @@ async function Finder({ profName }: FinderProps) {
     return days;
   };
 
-  if (filteredStarplanData.length === 0)
-    return <p className="p-8">Toenni could not be found 😢</p>;
-
   return (
     <>
       {dayArray().map(
@@ -63,7 +97,7 @@ async function Finder({ profName }: FinderProps) {
               <div className="p-4">
                 {filteredStarplanData.map((event, i) => (
                   <div key={`event-${i}`}>
-                    {sameDay(day, event.dateStart) && (
+                    {isSameDay(day, event.dateStart) && (
                       <div
                         className="flex justify-between space-x-3 mb-6"
                         key={`event-${i}1`}
