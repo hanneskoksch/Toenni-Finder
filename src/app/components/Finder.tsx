@@ -3,7 +3,8 @@
 import { Button } from "@/components/ui/button";
 import { getAllEvents, StarplanEvent } from "./parse-ical";
 import { useEffect, useState } from "react";
-import { LoaderCircle } from "lucide-react";
+import { Ban, LoaderCircle } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface FinderProps {
   profName: string;
@@ -40,7 +41,7 @@ function Finder({ profName }: FinderProps) {
   // loading state
   if (!filteredStarplanData)
     return (
-      <div className="flex space-x-3 text-zinc-600 mt-10">
+      <div className="flex space-x-3 text-zinc-600 my-16">
         <LoaderCircle className="animate-spin" />
         <p>Looking for {profName}...</p>
       </div>
@@ -48,7 +49,15 @@ function Finder({ profName }: FinderProps) {
 
   // no data found state
   if (filteredStarplanData.length === 0)
-    return <p className="p-8">{profName} could not be found 😢</p>;
+    return (
+      <Alert className="max-w-screen-sm my-16">
+        <Ban className="h-4 w-4" />
+        <AlertTitle>{profName} could not be found.</AlertTitle>
+        <AlertDescription>
+          Try searching for another Prof. or check the spelling.
+        </AlertDescription>
+      </Alert>
+    );
 
   const hasEventOnDay = (day: Date): boolean => {
     if (!filteredStarplanData) return false;
