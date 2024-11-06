@@ -1,12 +1,15 @@
 "use client";
 
 import Finder from "./components/Finder";
-import { useState } from "react";
 import OtherProfSearch from "./components/OtherProfSearch";
 import { Separator } from "@/components/ui/separator";
+import { parseAsString, useQueryState } from "nuqs";
 
 export default function Home() {
-  const [profName, setProfName] = useState("Toenni");
+  const [profName, setProfName] = useQueryState(
+    "Prof",
+    parseAsString.withDefault("Toenni")
+  );
 
   return (
     <main className="flex min-h-screen flex-col items-center p-4 md:p-24 mb-10">
