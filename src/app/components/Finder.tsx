@@ -93,6 +93,11 @@ function Finder({ profName }: FinderProps) {
             <div className="w-full max-w-screen-sm" key={`day-${index}`}>
               <p className="p-4 bg-gradient-to-r from-zinc-400 to-zinc-300 text-white rounded-lg ">
                 {weekdays[day.getDay()]}, {day.toLocaleDateString("de-DE")}
+                {isSameDay(new Date(), day) && " (Today)"}
+                {isSameDay(
+                  new Date(new Date().setDate(new Date().getDate() + 1)),
+                  day
+                ) && " (Tomorrow)"}
               </p>
               <div className="p-4">
                 {filteredStarplanData.map((event, i) => (
