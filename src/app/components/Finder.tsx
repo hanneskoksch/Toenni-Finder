@@ -129,6 +129,9 @@ function Finder({ profName }: FinderProps) {
                           </div>
                           <p className="text-sm">{event.courseName}</p>
                           <p className="text-sm text-zinc-500">
+                            {event.profName}
+                          </p>
+                          <p className="text-sm text-zinc-500">
                             {event.semester}
                           </p>
                         </div>
