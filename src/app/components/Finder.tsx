@@ -50,7 +50,7 @@ function Finder({ profName }: FinderProps) {
   // no data found state
   if (filteredStarplanData.length === 0)
     return (
-      <Alert className="max-w-screen-sm my-16">
+      <Alert className="max-w-(--breakpoint-sm) my-16">
         <Ban className="h-4 w-4" />
         <AlertTitle>{profName} could not be found.</AlertTitle>
         <AlertDescription>
@@ -99,8 +99,8 @@ function Finder({ profName }: FinderProps) {
       {dayArray().map(
         (day, index) =>
           hasEventOnDay(day) && (
-            <div className="w-full max-w-screen-sm" key={`day-${index}`}>
-              <p className="p-4 bg-gradient-to-r from-zinc-400 to-zinc-300 text-white rounded-lg ">
+            <div className="w-full max-w-(--breakpoint-sm)" key={`day-${index}`}>
+              <p className="p-4 bg-linear-to-r from-zinc-400 to-zinc-300 text-white rounded-lg ">
                 {weekdays[day.getDay()]}, {day.toLocaleDateString("de-DE")}
                 {isSameDay(new Date(), day) && " (Today)"}
                 {isSameDay(

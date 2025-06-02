@@ -20,7 +20,7 @@ function OtherProfSearch({ onSearch }: OtherProfSearchProps) {
           Looking for another Prof.?
         </label>
         <div className="flex space-x-3">
-          <div className="relative rounded-md shadow-sm ">
+          <div className="relative rounded-md shadow-xs ">
             <input
               id="profName"
               name="profName"
