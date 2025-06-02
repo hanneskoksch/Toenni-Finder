@@ -8,7 +8,7 @@ import { parseAsString, useQueryState } from "nuqs";
 export default function Home() {
   const [profName, setProfName] = useQueryState(
     "Prof",
-    parseAsString.withDefault("Toenni")
+    parseAsString.withDefault("Toenni"),
   );
 
   return (

@@ -20,7 +20,7 @@ interface StarplanEvent {
  */
 async function getOfferedSemesterIds(): Promise<number[]> {
   const response = await fetch(
-    "https://splan.hdm-stuttgart.de/splan/json?m=getpus"
+    "https://splan.hdm-stuttgart.de/splan/json?m=getpus",
   );
   const data = await response.json();
   return data[0].map((semester: any) => {
@@ -33,7 +33,7 @@ async function getOfferedSemesterIds(): Promise<number[]> {
  * for the relevant study programs
  */
 async function getSemesterNumberIds(
-  semesterId: number
+  semesterId: number,
 ): Promise<{ id: number; studyProgramId: number }[]> {
   const semesterNumberIds: { id: number; studyProgramId: number }[] = [];
 
@@ -45,7 +45,7 @@ async function getSemesterNumberIds(
 
   for (const studyProgramId of relevantStudyProgramIds) {
     const response = await fetch(
-      `https://splan.hdm-stuttgart.de/splan/json?m=getPgsExt&pu=${semesterId}&og=${studyProgramId}`
+      `https://splan.hdm-stuttgart.de/splan/json?m=getPgsExt&pu=${semesterId}&og=${studyProgramId}`,
     );
     const data = await response.json();
 
@@ -61,10 +61,10 @@ async function getSemesterNumberIds(
 
 async function getIcal(
   semesterId: number,
-  semesterNumberId: number
+  semesterNumberId: number,
 ): Promise<string> {
   const response = await fetch(
-    `https://splan.hdm-stuttgart.de/splan/ical?lan=de&puid=${semesterId}&type=pg&pgid=${semesterNumberId}`
+    `https://splan.hdm-stuttgart.de/splan/ical?lan=de&puid=${semesterId}&type=pg&pgid=${semesterNumberId}`,
   );
   const data = await response.text();
   return data;
@@ -73,7 +73,7 @@ async function getIcal(
 function parseIcal(
   ical: string,
   studyProgramId: number,
-  semesterId: number
+  semesterId: number,
 ): StarplanEvent[] {
   const jcalData = ICAL.parse(ical);
   const comp = new ICAL.Component(jcalData);
@@ -89,7 +89,7 @@ function parseIcal(
 function parseVevent(
   vevent: ICAL.Event,
   studyProgramId: number,
-  semesterId: number
+  semesterId: number,
 ): StarplanEvent {
   // Format: course \n prof \n semester
   const description = vevent.description;
@@ -139,14 +139,14 @@ async function getAllEvents(): Promise<StarplanEvent[]> {
       const newEvents = parseIcal(
         ical,
         semesterNumberId.studyProgramId,
-        semesterId
+        semesterId,
       );
       for (const newEvent of newEvents) {
         if (
           !allEvents.some(
             (event) =>
               event.courseName === newEvent.courseName &&
-              event.dateStart.valueOf() === newEvent.dateStart.valueOf()
+              event.dateStart.valueOf() === newEvent.dateStart.valueOf(),
           )
         ) {
           allEvents.push(newEvent);

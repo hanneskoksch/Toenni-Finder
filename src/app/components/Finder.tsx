@@ -12,7 +12,7 @@ interface FinderProps {
 
 function Finder({ profName }: FinderProps) {
   const [starPlanData, setStarPlanData] = useState<StarplanEvent[] | null>(
-    null
+    null,
   );
   const [filteredStarplanData, setFilteredStarplanData] = useState<
     StarplanEvent[] | null
@@ -33,8 +33,8 @@ function Finder({ profName }: FinderProps) {
     if (!starPlanData) return;
     setFilteredStarplanData(
       starPlanData.filter((event) =>
-        event.profName.toLowerCase().includes(profName.toLowerCase())
-      )
+        event.profName.toLowerCase().includes(profName.toLowerCase()),
+      ),
     );
   }, [starPlanData, profName]);
 
@@ -99,13 +99,16 @@ function Finder({ profName }: FinderProps) {
       {dayArray().map(
         (day, index) =>
           hasEventOnDay(day) && (
-            <div className="w-full max-w-(--breakpoint-sm)" key={`day-${index}`}>
+            <div
+              className="w-full max-w-(--breakpoint-sm)"
+              key={`day-${index}`}
+            >
               <p className="p-4 bg-linear-to-r from-zinc-400 to-zinc-300 text-white rounded-lg ">
                 {weekdays[day.getDay()]}, {day.toLocaleDateString("de-DE")}
                 {isSameDay(new Date(), day) && " (Today)"}
                 {isSameDay(
                   new Date(new Date().setDate(new Date().getDate() + 1)),
-                  day
+                  day,
                 ) && " (Tomorrow)"}
               </p>
               <div className="p-4">
@@ -153,7 +156,7 @@ function Finder({ profName }: FinderProps) {
                 ))}
               </div>
             </div>
-          )
+          ),
       )}
     </>
   );
