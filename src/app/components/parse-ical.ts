@@ -110,7 +110,7 @@ function parseVevent(
   let horstLocationName = location.split(",")[0];
   horstLocationName = horstLocationName.split(" ")[0];
 
-  const semester = description.split("\n")[2];
+  const semester = descriptionArray[2];
 
   const horstLinkDate = new Date().toISOString().split("T")[0];
 
