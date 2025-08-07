@@ -2,7 +2,7 @@
 
 import ICAL from "ical.js";
 
-interface StarplanEvent {
+export interface StarplanEvent {
   courseName: string;
   profName: string;
   roomId: string;
@@ -175,5 +175,3 @@ async function getAllEvents(): Promise<StarplanEvent[]> {
 }
 
 export { getAllEvents };
-
-export type { StarplanEvent };
