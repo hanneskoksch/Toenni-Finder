@@ -57,7 +57,7 @@ function Finder({ profName }: FinderProps) {
           Try searching for another Prof. or check the spelling.
           <br />
           <br />
-          Or maybe it's semester break?
+          Or maybe it&aposs semester break?
           <br />
           <Button variant="link" asChild size="sm">
             <a target="_blank" href="https://splan.hdm-stuttgart.de/splan/">
