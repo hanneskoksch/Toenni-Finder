@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { getAllEvents, StarplanEvent } from "./parse-ical";
 import { useEffect, useState } from "react";
-import { Ban, LoaderCircle } from "lucide-react";
+import { Ban, LoaderCircle, ArrowRight } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface FinderProps {
@@ -55,6 +55,15 @@ function Finder({ profName }: FinderProps) {
         <AlertTitle>{profName} could not be found.</AlertTitle>
         <AlertDescription>
           Try searching for another Prof. or check the spelling.
+          <br />
+          <br />
+          Or maybe it's semester break?
+          <br />
+          <Button variant="link" asChild size="sm">
+            <a target="_blank" href="https://splan.hdm-stuttgart.de/splan/">
+              <ArrowRight /> Check splan manually
+            </a>
+          </Button>
         </AlertDescription>
       </Alert>
     );
