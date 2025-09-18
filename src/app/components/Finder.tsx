@@ -5,12 +5,18 @@ import { getAllEvents, StarplanEvent } from "./parse-ical";
 import { useEffect, useState } from "react";
 import { Ban, LoaderCircle, ArrowRight } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { parseAsInteger, useQueryState } from "nuqs";
 
 interface FinderProps {
   profName: string;
 }
 
 function Finder({ profName }: FinderProps) {
+  const [weeksToCheck, setWeeks] = useQueryState(
+    "weeks",
+    parseAsInteger.withDefault(1),
+  );
+
   const [starPlanData, setStarPlanData] = useState<StarplanEvent[] | null>(
     null,
   );
@@ -20,13 +26,17 @@ function Finder({ profName }: FinderProps) {
 
   // initial data fetch
   useEffect(() => {
+    // reset data to show loading state when weeksToCheck change
+    setStarPlanData(null);
+    setFilteredStarplanData(null);
+
+    // fetch data from server
     const fetchStarPlanData = async () => {
-      const data = await getAllEvents();
+      const data = await getAllEvents(weeksToCheck);
       setStarPlanData(data);
     };
-
     fetchStarPlanData();
-  }, []);
+  }, [weeksToCheck]);
 
   // filter data based on profName
   useEffect(() => {
@@ -64,6 +74,9 @@ function Finder({ profName }: FinderProps) {
               <ArrowRight /> Check splan manually
             </a>
           </Button>
+          <Button variant="link" size="sm" onClick={() => setWeeks(24)}>
+            <ArrowRight /> Check longer period
+          </Button>
         </AlertDescription>
       </Alert>
     );
@@ -95,7 +108,7 @@ function Finder({ profName }: FinderProps) {
 
   const dayArray = () => {
     const days = [];
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < 7 * weeksToCheck; i++) {
       const day = new Date();
       day.setDate(day.getDate() + i);
       days.push(day);

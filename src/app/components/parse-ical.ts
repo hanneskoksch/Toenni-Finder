@@ -126,9 +126,8 @@ function parseVevent(
   };
 }
 
-async function getAllEvents(): Promise<StarplanEvent[]> {
+async function getAllEvents(weeks: number): Promise<StarplanEvent[]> {
   const allEvents: StarplanEvent[] = [];
-
   const semesterIds = await getOfferedSemesterIds();
 
   for (const semesterId of semesterIds) {
@@ -157,13 +156,15 @@ async function getAllEvents(): Promise<StarplanEvent[]> {
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const todayNextWeek = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
-  todayNextWeek.setHours(24, 0, 0, 0);
+  const todayInNWeeks = new Date(
+    today.getTime() + weeks * 7 * 24 * 60 * 60 * 1000,
+  );
+  todayInNWeeks.setHours(24, 0, 0, 0);
 
   const filteredEvents = allEvents.filter((event) => {
     return (
       // event.profName.includes("Toenniessen") && // filtering was moved to client component
-      event.dateStart >= today && event.dateStart <= todayNextWeek
+      event.dateStart >= today && event.dateStart <= todayInNWeeks
     );
   });
 
