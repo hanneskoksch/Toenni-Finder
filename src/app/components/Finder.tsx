@@ -84,7 +84,7 @@ function Finder({ profName }: FinderProps) {
   const hasEventOnDay = (day: Date): boolean => {
     if (!filteredStarplanData) return false;
     return filteredStarplanData.some((event) => {
-      return event.dateStart.toDateString() === day.toDateString();
+      return new Date(event.dateStartMs).toDateString() === day.toDateString();
     });
   };
 
@@ -105,6 +105,19 @@ function Finder({ profName }: FinderProps) {
       d1.getDate() === d2.getDate()
     );
   };
+
+  const isSameDayMs = (ms: number, day: Date): boolean => {
+    const d = new Date(ms);
+    return (
+      d.getFullYear() === day.getFullYear() &&
+      d.getMonth() === day.getMonth() &&
+      d.getDate() === day.getDate()
+    );
+  };
+
+  function formatTime(ms: number) {
+    return new Date(ms).toLocaleTimeString("de-DE").slice(0, 5);
+  }
 
   const dayArray = () => {
     const days = [];
@@ -136,18 +149,18 @@ function Finder({ profName }: FinderProps) {
               <div className="p-4">
                 {filteredStarplanData.map((event, i) => (
                   <div key={`event-${i}`}>
-                    {isSameDay(day, event.dateStart) && (
+                    {isSameDayMs(event.dateStartMs, day) && (
                       <div
                         className="flex justify-between space-x-3 mb-6"
                         key={`event-${i}1`}
                       >
                         <div>
                           <div className="flex space-x-2 items-center">
-                            <p className="font-bold">{`${event.dateStart
-                              .toLocaleTimeString("de-DE")
-                              .substring(0, 5)} - ${event.dateEnd
-                              .toLocaleTimeString("de-DE")
-                              .substring(0, 5)}`}</p>
+                            <p className="font-bold">
+                              {`${formatTime(
+                                event.dateStartMs,
+                              )} - ${formatTime(event.dateEndMs)}`}
+                            </p>
                             <p className="px-1 border-zinc-200 border-2 rounded-lg bg-zinc-50 text-xs">
                               {event.roomId}
                             </p>

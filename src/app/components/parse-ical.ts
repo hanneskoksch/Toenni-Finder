@@ -8,8 +8,8 @@ export interface StarplanEvent {
   profName: string;
   roomId: string;
 
-  dateStart: Date;
-  dateEnd: Date;
+  dateStartMs: number;
+  dateEndMs: number;
 
   horstLink: string;
   semester: string;
@@ -119,8 +119,8 @@ function parseVevent(
     courseName: descriptionArray[0],
     profName: descriptionArray[1],
     roomId: location,
-    dateStart: dateStart.toJSDate(),
-    dateEnd: dateEnd.toJSDate(),
+    dateStartMs: dateStart.toJSDate().getTime(),
+    dateEndMs: dateEnd.toJSDate().getTime(),
     horstLink: `https://horst.hdm-stuttgart.de/${horstLocationName}`,
     semester: semester,
     splanLink: `https://splan.hdm-stuttgart.de/splan/mobile?lan=de&acc=true&act=tt&sel=pg&pu=${semesterId}&og=${studyProgramId}&pg=${semester}&sd=true&dfc=${horstLinkDate}&loc=1&sa=false&cb=o`,
@@ -164,7 +164,7 @@ async function getAllEvents(weeks: number): Promise<StarplanEvent[]> {
           !allEvents.some(
             (event) =>
               event.courseName === newEvent.courseName &&
-              event.dateStart.valueOf() === newEvent.dateStart.valueOf(),
+              event.dateStartMs === newEvent.dateStartMs,
           )
         ) {
           allEvents.push(newEvent);
@@ -180,15 +180,18 @@ async function getAllEvents(weeks: number): Promise<StarplanEvent[]> {
   );
   todayInNWeeks.setHours(24, 0, 0, 0);
 
+  const todayMs = today.getTime();
+  const todayInNWeeksMs = todayInNWeeks.getTime();
+
   const filteredEvents = allEvents.filter((event) => {
     return (
       // event.profName.includes("Toenniessen") && // filtering was moved to client component
-      event.dateStart >= today && event.dateStart <= todayInNWeeks
+      event.dateStartMs >= todayMs && event.dateStartMs <= todayInNWeeksMs
     );
   });
 
   const sortedEvents = filteredEvents.sort((a, b) => {
-    return a.dateStart.valueOf() - b.dateStart.valueOf();
+    return a.dateStartMs - b.dateStartMs;
   });
 
   return sortedEvents;
