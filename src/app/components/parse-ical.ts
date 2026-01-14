@@ -1,6 +1,7 @@
 "use server";
 
 import ICAL from "ical.js";
+import { cacheLife } from "next/cache";
 
 export interface StarplanEvent {
   courseName: string;
@@ -126,7 +127,24 @@ function parseVevent(
   };
 }
 
+function secondsUntilNextMidnight() {
+  const now = new Date();
+  const nextMidnight = new Date(now);
+  nextMidnight.setHours(24, 0, 0, 0);
+
+  return Math.floor((nextMidnight.getTime() - now.getTime()) / 1000);
+}
+
 async function getAllEvents(weeks: number): Promise<StarplanEvent[]> {
+  "use cache";
+
+  const secondsUntilNextMidnightValue = secondsUntilNextMidnight();
+  cacheLife({
+    stale: 300, // Client can use stale cache for 5 minutes
+    revalidate: secondsUntilNextMidnightValue, // Cache until next midnight
+    expire: secondsUntilNextMidnightValue, // Cache until next midnight
+  });
+
   const allEvents: StarplanEvent[] = [];
   const semesterIds = await getOfferedSemesterIds();
 
