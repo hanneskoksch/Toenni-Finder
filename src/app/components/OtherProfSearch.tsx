@@ -10,6 +10,20 @@ interface OtherProfSearchProps {
 function OtherProfSearch({ onSearch }: OtherProfSearchProps) {
   const [profName, setProfName] = useState("");
 
+  const handleSearch = () => {
+    if (profName !== "") {
+      onSearch(profName.trim());
+      window.scrollTo(0, 0);
+      document.getElementById("profName")?.blur();
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
+
   return (
     <>
       <div>
@@ -28,6 +42,7 @@ function OtherProfSearch({ onSearch }: OtherProfSearchProps) {
               placeholder="Name of Prof."
               value={profName}
               onChange={(e) => setProfName(e.target.value)}
+              onKeyDown={handleKeyDown}
               className="block w-full rounded-md border-0 py-1.5 pl-2 pr-7 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
             />
             {profName !== "" && (
@@ -48,13 +63,8 @@ function OtherProfSearch({ onSearch }: OtherProfSearchProps) {
           </div>
           <Button
             variant="secondary"
-            onClick={
-              profName !== ""
-                ? () => {
-                    onSearch(profName.trim());
-                  }
-                : undefined
-            }
+            onClick={handleSearch}
+            disabled={profName === ""}
           >
             Search
           </Button>
