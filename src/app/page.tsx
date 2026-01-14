@@ -18,7 +18,7 @@ export default function Home() {
       </h1>
       <p className="text-center pb-12">
         A tool for all people who are struggling to find their dearest and
-        beloved Prof. ❤️
+        beloved prof who rarely reads his emails... ❤️
       </p>
       <Finder profName={profName} />
       <Separator className="my-8 max-w-(--breakpoint-sm)" />

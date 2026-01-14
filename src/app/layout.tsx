@@ -10,7 +10,7 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Toenni-Finder",
   description:
-    "A tool for all people who are struggling to find their dearest and beloved Prof. ❤️",
+    "A tool for all people who are struggling to find their dearest and beloved prof who rarely reads his emails...  ❤️",
 };
 
 export default function RootLayout({
