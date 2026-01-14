@@ -1,42 +1,26 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { getAllEventsCached, StarplanEvent } from "./parse-ical";
+import { StarplanEvent } from "./parse-ical";
 import { useEffect, useState } from "react";
 import { Ban, LoaderCircle, ArrowRight } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { parseAsInteger, useQueryState } from "nuqs";
 
 interface FinderProps {
+  starPlanData: StarplanEvent[] | null;
   profName: string;
 }
 
-function Finder({ profName }: FinderProps) {
+function Finder({ starPlanData, profName }: FinderProps) {
   const [weeksToCheck, setWeeks] = useQueryState(
     "weeks",
     parseAsInteger.withDefault(1),
   );
 
-  const [starPlanData, setStarPlanData] = useState<StarplanEvent[] | null>(
-    null,
-  );
   const [filteredStarplanData, setFilteredStarplanData] = useState<
     StarplanEvent[] | null
   >(null);
-
-  // initial data fetch
-  useEffect(() => {
-    // reset data to show loading state when weeksToCheck change
-    setStarPlanData(null);
-    setFilteredStarplanData(null);
-
-    // fetch data from server
-    const fetchStarPlanData = async () => {
-      const data = await getAllEventsCached(weeksToCheck);
-      setStarPlanData(data);
-    };
-    fetchStarPlanData();
-  }, [weeksToCheck]);
 
   // filter data based on profName
   useEffect(() => {

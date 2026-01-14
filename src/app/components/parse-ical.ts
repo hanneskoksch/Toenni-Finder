@@ -137,7 +137,8 @@ function secondsUntilNextMidnight() {
 
 const getAllEventsCached = unstable_cache(
   async (weeks: number) => {
-    return await getAllEvents(weeks);
+    const allEvents = await getAllEvents(weeks);
+    return { allEvents, fetchedAt: new Date().toISOString() };
   },
   ["all-events"], // cache key prefix
   {
