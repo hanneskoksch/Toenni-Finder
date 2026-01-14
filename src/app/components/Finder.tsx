@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { getAllEvents, StarplanEvent } from "./parse-ical";
+import { getAllEventsCached, StarplanEvent } from "./parse-ical";
 import { useEffect, useState } from "react";
 import { Ban, LoaderCircle, ArrowRight } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -32,7 +32,7 @@ function Finder({ profName }: FinderProps) {
 
     // fetch data from server
     const fetchStarPlanData = async () => {
-      const data = await getAllEvents(weeksToCheck);
+      const data = await getAllEventsCached(weeksToCheck);
       setStarPlanData(data);
     };
     fetchStarPlanData();
