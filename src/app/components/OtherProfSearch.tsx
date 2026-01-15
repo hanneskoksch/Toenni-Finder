@@ -1,14 +1,15 @@
 "use client";
 
+import Autocomplete from "@/components/ui/autocomplete";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { XIcon } from "lucide-react";
 import { useId, useRef, useState } from "react";
 
 interface OtherProfSearchProps {
   onSearch: (profName: string) => void;
+  profList?: string[];
 }
-function OtherProfSearch({ onSearch }: OtherProfSearchProps) {
+function OtherProfSearch({ onSearch, profList }: OtherProfSearchProps) {
   const [profName, setProfName] = useState("");
 
   const handleSearch = () => {
@@ -51,16 +52,14 @@ function OtherProfSearch({ onSearch }: OtherProfSearchProps) {
 
       <div className="flex gap-2">
         <div className="relative">
-          <Input
-            name="profName"
-            placeholder="Name of Prof."
+          <Autocomplete
+            allSuggestions={profList ?? []}
+            placeholder="Name of prof"
             ref={inputRef}
             id={id}
-            type="text"
             value={profName}
-            onChange={(e) => setProfName(e.target.value)}
+            onChange={(value) => setProfName(value)}
             onKeyDown={handleKeyDown}
-            className="pr-9"
           />
           {profName && (
             <Button

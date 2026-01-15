@@ -13,6 +13,7 @@ export default function Home() {
     "Prof",
     parseAsString.withDefault("Toenni"),
   );
+  const [profList, setProfList] = useState<string[]>([]);
   const [weeksToCheck] = useQueryState("weeks", parseAsInteger.withDefault(1));
 
   const [starPlanData, setStarPlanData] = useState<StarplanEvent[] | null>(
@@ -31,6 +32,15 @@ export default function Home() {
       const data = await getAllEventsCached(weeksToCheck);
       setStarPlanData(data.allEvents);
       setDateFetchedAt(data.fetchedAt);
+
+      // extract prof list
+      const profSet = new Set<string>();
+      data.allEvents.forEach((event) => {
+        event.profName.split(",").forEach((prof) => {
+          profSet.add(prof.trim());
+        });
+      });
+      setProfList(Array.from(profSet).sort());
     };
     fetchStarPlanData();
   }, [weeksToCheck]);
@@ -50,6 +60,7 @@ export default function Home() {
         onSearch={(query: string) => {
           setProfName(query);
         }}
+        profList={profList}
       />
       <Footer dataFetchedAt={dateFetchedAt} />
     </main>
