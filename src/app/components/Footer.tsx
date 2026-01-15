@@ -3,17 +3,9 @@ import { Button } from "@/components/ui/button";
 function Footer({ dataFetchedAt }: { dataFetchedAt: string | null }) {
   return (
     <div>
-      <footer className="mt-16 mb-8 text-center text-sm text-zinc-500">
+      <footer className="mt-16 mb-8 text-center text-sm text-zinc-500 space-y-2">
         <p>
-          Data fetched from{" "}
-          <a
-            href="https://splan.hdm-stuttgart.de/"
-            target="_blank"
-            className="underline hover:text-zinc-700"
-          >
-            HdM StarPlan
-          </a>
-          . Built with ❤️ (and frustration) by{" "}
+          Built with ❤️ (and frustration) by{" "}
           <a
             href="https://github.com/hanneskoksch"
             target="_blank"
@@ -22,9 +14,21 @@ function Footer({ dataFetchedAt }: { dataFetchedAt: string | null }) {
             Hannes
           </a>
           .
+          <br />
+        </p>
+        <p>
+          Data fetched from{" "}
+          <a
+            href="https://splan.hdm-stuttgart.de/"
+            target="_blank"
+            className="underline hover:text-zinc-700"
+          >
+            HdM StarPlan
+          </a>{" "}
+          for the MI, MM, and CSM degree programs.
         </p>
         {dataFetchedAt && (
-          <p className="mt-2 text-xs text-zinc-400">
+          <p className="mt-5 text-xs text-zinc-400">
             Data last fetched at: {new Date(dataFetchedAt).toLocaleString()}
           </p>
         )}
