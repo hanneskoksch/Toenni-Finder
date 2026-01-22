@@ -127,14 +127,6 @@ function parseVevent(
   };
 }
 
-function secondsUntilNextMidnight() {
-  const now = new Date();
-  const nextMidnight = new Date(now);
-  nextMidnight.setHours(24, 0, 0, 0);
-
-  return Math.floor((nextMidnight.getTime() - now.getTime()) / 1000);
-}
-
 const getAllEventsCached = unstable_cache(
   async (weeks: number) => {
     const allEvents = await getAllEvents(weeks);
@@ -142,7 +134,7 @@ const getAllEventsCached = unstable_cache(
   },
   ["all-events"], // cache key prefix
   {
-    revalidate: secondsUntilNextMidnight(),
+    revalidate: 60 * 60 * 24, // Revalidate every day
   },
 );
 
