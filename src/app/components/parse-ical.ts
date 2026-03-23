@@ -24,7 +24,7 @@ async function getOfferedSemesterIds(): Promise<number[]> {
     "https://splan.hdm-stuttgart.de/splan/json?m=getpus",
   );
   const data = await response.json();
-  return data[0].map((semester: any) => {
+  return data[0].map((semester: { id: number }) => {
     return semester.id;
   });
 }
@@ -50,7 +50,7 @@ async function getSemesterNumberIds(
     );
     const data = await response.json();
 
-    data[0].map((semesterNumber: any) => {
+    data[0].map((semesterNumber: { id: number }) => {
       semesterNumberIds.push({
         id: semesterNumber.id,
         studyProgramId: studyProgramId,
