@@ -3,7 +3,7 @@
 import Autocomplete from "@/components/ui/autocomplete";
 import { Button } from "@/components/ui/button";
 import { XIcon } from "lucide-react";
-import { useId, useRef, useState } from "react";
+import { useId, useState } from "react";
 
 interface OtherProfSearchProps {
   onSearch: (profName: string) => void;
