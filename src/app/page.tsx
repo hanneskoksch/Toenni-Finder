@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Finder from "./components/Finder";
 import OtherProfSearch from "./components/OtherProfSearch";
 import { Separator } from "@/components/ui/separator";
@@ -9,6 +9,7 @@ import { getAllEventsCached, StarplanEvent } from "./components/parse-ical";
 import Footer from "./components/Footer";
 
 export default function Home() {
+  const profSearchInputRef = useRef<HTMLInputElement>(null);
   const [profName, setProfName] = useQueryState(
     "Prof",
     parseAsString.withDefault("Toenni"),
@@ -54,9 +55,14 @@ export default function Home() {
         A tool for all people who are struggling to find their dearest and
         beloved prof who rarely reads his emails... ❤️
       </p>
-      <Finder starPlanData={starPlanData} profName={profName} />
+      <Finder
+        starPlanData={starPlanData}
+        profName={profName}
+        profSearchInputRef={profSearchInputRef}
+      />
       <Separator className="my-8 max-w-(--breakpoint-sm)" />
       <OtherProfSearch
+        profSearchInputRef={profSearchInputRef}
         onSearch={(query: string) => {
           setProfName(query);
         }}

@@ -8,8 +8,13 @@ import { useId, useRef, useState } from "react";
 interface OtherProfSearchProps {
   onSearch: (profName: string) => void;
   profList?: string[];
+  profSearchInputRef: React.RefObject<HTMLInputElement | null>;
 }
-function OtherProfSearch({ onSearch, profList }: OtherProfSearchProps) {
+function OtherProfSearch({
+  onSearch,
+  profList,
+  profSearchInputRef,
+}: OtherProfSearchProps) {
   const [profName, setProfName] = useState("");
 
   const handleSearch = () => {
@@ -18,8 +23,8 @@ function OtherProfSearch({ onSearch, profList }: OtherProfSearchProps) {
       window.scrollTo(0, 0);
 
       // unfocus input after search
-      if (inputRef.current) {
-        inputRef.current.blur();
+      if (profSearchInputRef.current) {
+        profSearchInputRef.current.blur();
       }
     }
   };
@@ -30,14 +35,13 @@ function OtherProfSearch({ onSearch, profList }: OtherProfSearchProps) {
     }
   };
 
-  const inputRef = useRef<HTMLInputElement>(null);
   const id = useId();
 
   const handleClearInput = () => {
     setProfName("");
 
-    if (inputRef.current) {
-      inputRef.current.focus();
+    if (profSearchInputRef.current) {
+      profSearchInputRef.current.focus();
     }
   };
 
@@ -55,7 +59,7 @@ function OtherProfSearch({ onSearch, profList }: OtherProfSearchProps) {
           <Autocomplete
             allSuggestions={profList ?? []}
             placeholder="Name of prof"
-            ref={inputRef}
+            ref={profSearchInputRef}
             id={id}
             value={profName}
             onChange={(value) => setProfName(value)}

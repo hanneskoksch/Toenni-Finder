@@ -10,9 +10,10 @@ import { parseAsInteger, useQueryState } from "nuqs";
 interface FinderProps {
   starPlanData: StarplanEvent[] | null;
   profName: string;
+  profSearchInputRef: React.RefObject<HTMLInputElement | null>;
 }
 
-function Finder({ starPlanData, profName }: FinderProps) {
+function Finder({ starPlanData, profName, profSearchInputRef }: FinderProps) {
   const [weeksToCheck, setWeeks] = useQueryState(
     "weeks",
     parseAsInteger.withDefault(1),
@@ -21,6 +22,10 @@ function Finder({ starPlanData, profName }: FinderProps) {
   const [filteredStarplanData, setFilteredStarplanData] = useState<
     StarplanEvent[] | null
   >(null);
+
+  const onSearchForAnotherProf = () => {
+    profSearchInputRef.current?.focus();
+  };
 
   // filter data based on profName
   useEffect(() => {
@@ -48,15 +53,21 @@ function Finder({ starPlanData, profName }: FinderProps) {
         <Ban className="h-4 w-4" />
         <AlertTitle>{profName} could not be found.</AlertTitle>
         <AlertDescription>
-          Try searching for another Prof. or check the spelling.
-          <br />
-          <br />
-          Or maybe it&apos;s semester break?
-          <br />
+          <p className="my-2">
+            Try searching for another prof. or check the spelling. <br />
+            Or maybe it&apos;s semester break?
+          </p>
           <Button variant="link" asChild size="sm">
             <a target="_blank" href="https://splan.hdm-stuttgart.de/splan/">
               <ArrowRight /> Check splan manually
             </a>
+          </Button>
+          <Button
+            variant="link"
+            size="sm"
+            onClick={() => onSearchForAnotherProf()}
+          >
+            <ArrowRight /> Search for another prof.
           </Button>
           <Button variant="link" size="sm" onClick={() => setWeeks(24)}>
             <ArrowRight /> Check longer period
