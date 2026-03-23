@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { StarplanEvent } from "./parse-ical";
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { Ban, LoaderCircle, ArrowRight } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { parseAsInteger, useQueryState } from "nuqs";
@@ -19,23 +19,16 @@ function Finder({ starPlanData, profName, profSearchInputRef }: FinderProps) {
     parseAsInteger.withDefault(1),
   );
 
-  const [filteredStarplanData, setFilteredStarplanData] = useState<
-    StarplanEvent[] | null
-  >(null);
+  const filteredStarplanData = useMemo(() => {
+    if (!starPlanData) return null;
+    return starPlanData.filter((event) =>
+      event.profName.toLowerCase().includes(profName.toLowerCase()),
+    );
+  }, [starPlanData, profName]);
 
   const onSearchForAnotherProf = () => {
     profSearchInputRef.current?.focus();
   };
-
-  // filter data based on profName
-  useEffect(() => {
-    if (!starPlanData) return;
-    setFilteredStarplanData(
-      starPlanData.filter((event) =>
-        event.profName.toLowerCase().includes(profName.toLowerCase()),
-      ),
-    );
-  }, [starPlanData, profName]);
 
   // loading state
   if (!filteredStarplanData)
