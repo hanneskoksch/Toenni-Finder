@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect, RefObject } from "react";
+import { useState, RefObject } from "react";
 import { Input } from "@/components/ui/input";
 
 interface AutoCompleteProps {
@@ -22,35 +22,15 @@ export default function Autocomplete({
   onChange,
   onKeyDown,
 }: AutoCompleteProps) {
-  const [suggestions, setSuggestions] = useState<string[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [isFocused, setIsFocused] = useState(false);
 
-  const fetchSuggestions = (query: string): string[] => {
-    return allSuggestions.filter((suggestion) =>
-      suggestion.toLowerCase().includes(query.toLowerCase()),
-    );
-  };
-
-  const fetchSuggestionsCallback = useCallback(
-    async (q: string) => {
-      if (q.trim() === "") {
-        setSuggestions([]);
-        return;
-      }
-      const results = fetchSuggestions(q);
-      setSuggestions(results);
-    },
-    [allSuggestions],
-  );
-
-  useEffect(() => {
-    if (value && isFocused) {
-      fetchSuggestionsCallback(value);
-    } else {
-      setSuggestions([]);
-    }
-  }, [value, fetchSuggestionsCallback, isFocused]);
+  const suggestions =
+    isFocused && value?.trim()
+      ? allSuggestions.filter((suggestion) =>
+          suggestion.toLowerCase().includes(value.toLowerCase()),
+        )
+      : [];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
@@ -70,10 +50,8 @@ export default function Autocomplete({
       setSelectedIndex((prev) => (prev > 0 ? prev - 1 : -1));
     } else if (e.key === "Enter" && selectedIndex >= 0) {
       onChange?.(suggestions[selectedIndex]);
-      setSuggestions([]);
       setSelectedIndex(-1);
     } else if (e.key === "Escape") {
-      setSuggestions([]);
       setSelectedIndex(-1);
     } else {
       onKeyDown?.(e);
@@ -82,7 +60,6 @@ export default function Autocomplete({
 
   const handleSuggestionClick = (suggestion: string) => {
     onChange?.(suggestion);
-    setSuggestions([]);
     setSelectedIndex(-1);
   };
 
@@ -94,7 +71,6 @@ export default function Autocomplete({
     // Delay hiding suggestions to allow for click events on suggestions
     setTimeout(() => {
       setIsFocused(false);
-      setSuggestions([]);
       setSelectedIndex(-1);
     }, 200);
   };
