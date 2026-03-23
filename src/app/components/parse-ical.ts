@@ -1,6 +1,6 @@
 "use server";
 
-import ICAL from "ical.js";
+import ical from "node-ical";
 import { unstable_cache } from "next/cache";
 
 export interface StarplanEvent {
@@ -60,67 +60,87 @@ async function getSemesterNumberIds(
   return semesterNumberIds;
 }
 
-async function getIcal(
+async function getIcalEvents(
   semesterId: number,
   semesterNumberId: number,
-): Promise<string> {
-  const response = await fetch(
+): Promise<ical.CalendarResponse> {
+  return ical.async.fromURL(
     `https://splan.hdm-stuttgart.de/splan/ical?lan=de&puid=${semesterId}&type=pg&pgid=${semesterNumberId}`,
   );
-  const data = await response.text();
-  return data;
 }
 
 function parseIcal(
-  ical: string,
+  icalEvents: ical.CalendarResponse,
   studyProgramId: number,
   semesterId: number,
 ): StarplanEvent[] {
-  const jcalData = ICAL.parse(ical);
-  const comp = new ICAL.Component(jcalData);
-  const vevents = comp.getAllSubcomponents("vevent");
   const allEvents: StarplanEvent[] = [];
-  for (const vevent of vevents) {
-    const event = new ICAL.Event(vevent);
+
+  for (const event of Object.values(icalEvents)) {
+    if (!event) {
+      continue;
+    }
+    if (event.type !== "VEVENT") {
+      continue;
+    }
     allEvents.push(parseVevent(event, studyProgramId, semesterId));
   }
+
   return allEvents;
 }
 
+function parseValue(
+  value: string | { val: string } | undefined,
+): string {
+  if (!value) {
+    return "";
+  }
+
+  if (typeof value === "string") {
+    return value;
+  }
+
+  return value.val;
+}
+
 function parseVevent(
-  vevent: ICAL.Event,
+  vevent: ical.VEvent,
   studyProgramId: number,
   semesterId: number,
 ): StarplanEvent {
   // Format: course \n prof \n semester
-  const description = vevent.description;
+  const description = parseValue(vevent.description);
   let descriptionArray = description.split("\n");
-  descriptionArray = descriptionArray.filter((value) => value !== "Verlegung");
+  descriptionArray = descriptionArray.filter(
+    (value: string) => value !== "Verlegung",
+  );
   // const description = vevents[0].jCal[1][6][3];
 
-  const dateStart = vevent.startDate;
+  const dateStart = vevent.start;
   // const dateStart = vevents[0].jCal[1][1][3];
 
-  const dateEnd = vevent.endDate;
+  const dateEnd = vevent.end;
   // const dateEnd = vevents[0].jCal[1][2][3];
 
-  const location = vevent.location;
+  const location = parseValue(vevent.location);
   // const location = vevents[0].jCal[1][5][3];
 
   // Only use one room
   let horstLocationName = location.split(",")[0];
   horstLocationName = horstLocationName.split(" ")[0];
 
-  const semester = descriptionArray[2];
+  const semester = descriptionArray[2] || "";
 
   const horstLinkDate = new Date().toISOString().split("T")[0];
+  const startDate = dateStart ?? new Date(0);
+  const endDate = dateEnd ?? startDate;
 
   return {
-    courseName: descriptionArray[0],
-    profName: descriptionArray[1],
+    courseName: descriptionArray[0] || "",
+    profName: descriptionArray[1] || "",
     roomId: location,
-    dateStartMs: dateStart.toJSDate().getTime(),
-    dateEndMs: dateEnd.toJSDate().getTime(),
+    dateStartMs: startDate.getTime(),
+    dateEndMs: endDate.getTime(),
     horstLink: `https://horst.hdm-stuttgart.de/${horstLocationName}`,
     semester: semester,
     splanLink: `https://splan.hdm-stuttgart.de/splan/mobile?lan=de&acc=true&act=tt&sel=pg&pu=${semesterId}&og=${studyProgramId}&pg=${semester}&sd=true&dfc=${horstLinkDate}&loc=1&sa=false&cb=o`,
@@ -146,9 +166,9 @@ async function getAllEvents(weeks: number): Promise<StarplanEvent[]> {
     const semesterNumberIds = await getSemesterNumberIds(semesterId);
 
     for (const semesterNumberId of semesterNumberIds) {
-      const ical = await getIcal(semesterId, semesterNumberId.id);
+      const icalEvents = await getIcalEvents(semesterId, semesterNumberId.id);
       const newEvents = parseIcal(
-        ical,
+        icalEvents,
         semesterNumberId.studyProgramId,
         semesterId,
       );
