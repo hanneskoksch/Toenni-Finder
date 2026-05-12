@@ -25,6 +25,11 @@ export default function RootLayout({
           rel="icon"
           href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>❤️</text></svg>"
         />
+        <script
+          defer
+          src="https://cloud.umami.is/script.js"
+          data-website-id="ed2b97d9-c97b-4d65-8c54-e318c76e2823"
+        ></script>
       </head>
       <body className={inter.className}>
         <NuqsAdapter>
